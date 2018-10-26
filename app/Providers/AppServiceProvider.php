@@ -27,5 +27,10 @@ class AppServiceProvider extends ServiceProvider
             'App\Contracts\Repositories\SummonerRepositoryInterface',
             'App\Repositories\SummonerRepository'
         );
+
+        $this->app->bind(
+            'App\Contracts\Repositories\MatchesRepositoryInterface',
+            'App\Repositories\MatchesRepository'
+        );
     }
 }

@@ -16,6 +16,6 @@ Route::get('/', function () {
 });
 
 Route::group(['prefix' => 'api'], function() {
-    Route::get('/summoner/by-name/{name}', 'SummonerController@byName');
-
+    Route::get('/summoner/by-name/{name}/{server?}', 'SummonerController@byName');
+    Route::get('/matchlist/by-identity/{identity}', 'MatchListController@getMatchesByIdentity');
 });

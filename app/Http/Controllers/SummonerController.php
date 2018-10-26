@@ -27,10 +27,10 @@ class SummonerController extends Controller
      *
      * @return Illuminate\Http\Response
      */
-    public function byName($name)
+    public function byName($name, $server = null)
     {
         $user = $this->summonerRepository
-            ->server('na1')
+            ->server($server)
             ->getSummonerByName($name);
 
         return response()->json($user);
