@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class BaseApiRepository
 {
@@ -21,22 +22,21 @@ class BaseApiRepository
     protected $server;
 
     /**
-     * Guzzle http client
+     * A wrapper method for making api calls to the riot api
      *
-     * @var GuzzleHttp\Client
+     * @param string $method
+     * @param string $url
+     * @param array $params
+     * @return mixed
      */
-    protected $client;
-
-    /**
-     * BaseApiRepository construct
-     */
-    public function __construct()
+    public function apiRequest(string $method, string $url, array $params = [])
     {
-        $this->client = new Client([
-            'headers' => [
-                'X-Riot-Token' => config('riot.riot-games-api-key'),
-            ],
-        ]);
+        $response = $this->getClient()
+            ->$method($this->buildUrl($url), [
+                'query' => $params
+            ]);
+
+        return $this->parseResponse($response->getBody());
     }
 
     /**
@@ -55,9 +55,10 @@ class BaseApiRepository
     /**
      * Form the url endpoint to the api
      *
+     * @param string $end
      * @return string
      */
-    protected function buildUrl($end)
+    protected function buildUrl(string $end)
     {
         $this->server = $this->server != null ? $this->server : config('riot.default-region');
 
@@ -73,5 +74,19 @@ class BaseApiRepository
     protected function parseResponse($response)
     {
         return json_decode($response, true);
+    }
+
+    /**
+     * Returns an instance of guzzle client
+     *
+     * @return GuzzleHttp\Client
+     */
+    protected function getClient()
+    {
+        return new Client([
+            'headers' => [
+                'X-Riot-Token' => config('riot.riot-games-api-key'),
+            ],
+        ]);
     }
 }

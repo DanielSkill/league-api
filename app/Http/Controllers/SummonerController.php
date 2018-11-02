@@ -25,13 +25,47 @@ class SummonerController extends Controller
     /**
      * Get a summoner by their name
      *
+     * @param string $name
+     * @param string $server
      * @return Illuminate\Http\Response
      */
-    public function byName($name, $server = null)
+    public function byName(string $name, string $server = null)
     {
         $user = $this->summonerRepository
             ->server($server)
             ->getSummonerByName($name);
+
+        return response()->json($user);
+    }
+
+    /**
+     * Get a summoner by their name
+     *
+     * @param int $id
+     * @param string $server
+     * @return Illuminate\Http\Response
+     */
+    public function bySummonerId(int $id, string $server = null)
+    {
+        $user = $this->summonerRepository
+            ->server($server)
+            ->getSummonerBySummonerid($id);
+
+        return response()->json($user);
+    }
+
+    /**
+     * Get a summoner by their name
+     * 
+     * @param int $id
+     * @param string $server
+     * @return Illuminate\Http\Response
+     */
+    public function byAccountId(int $id, string $server = null)
+    {
+        $user = $this->summonerRepository
+            ->server($server)
+            ->getSummonerByAccountId($id);
 
         return response()->json($user);
     }

@@ -26,21 +26,17 @@ class MatchesRepository extends BaseApiRepository implements MatchesRepositoryIn
      * @param int|null $season
      * @return array
      */
-    public function getMatchListByAccountId($id, $end_time = null, $begin_index = null, $champion = null, $end_index = 10, $queue = null, $season = null)
+    public function getMatchListByAccountId(int $id, int $end_time = null, int $begin_index = null, int $champion = null, int $end_index = 10, int $queue = null, int $season = null)
     {
         // Get the initial list of games to use the gameId for more detailed info
-        $matches = $this->client->request('GET', $this->buildUrl('matchlists/by-account/' . $id), [
-            'query' => [
-                'endTime' => $end_time,
-                'beginIndex' => $begin_index,
-                'champion' => $champion,
-                'endIndex' => $end_index,
-                'queue' => $queue,
-                'season' => $season,
-            ]
+        $match_list = $this->apiRequest('GET', 'matchlists/by-account/' . $id, [
+            'endTime' => $end_time,
+            'beginIndex' => $begin_index,
+            'champion' => $champion,
+            'endIndex' => $end_index,
+            'queue' => $queue,
+            'season' => $season,
         ]);
-
-        $match_list = $this->parseResponse($matches->getBody());
 
         $match_collection = collect();
 
@@ -60,10 +56,10 @@ class MatchesRepository extends BaseApiRepository implements MatchesRepositoryIn
      * @param int $id
      * @return object
      */
-    public function getMatchDetailsByGameId($id)
+    public function getMatchDetailsByGameId(int $id)
     {
-        $match_details = $this->client->request('GET', $this->buildUrl('matches/' . $id));
+        $match_details = $this->apiRequest('GET', 'matches/' . $id);
 
-        return $this->parseResponse($match_details->getBody());
+        return $match_details;
     }
 }

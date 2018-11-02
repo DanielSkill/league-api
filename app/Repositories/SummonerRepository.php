@@ -20,11 +20,11 @@ class SummonerRepository extends BaseApiRepository implements SummonerRepository
      * @param string $name
      * @return object
      */
-    public function getSummonerByName($name)
+    public function getSummonerByName(string $name)
     {
-        $response = $this->client->request('GET', $this->buildUrl('summoners/by-name/' . $name));
+        $response = $this->apiRequest('GET', 'summoners/by-name/' . $name);
 
-        return $this->parseResponse($response->getBody());
+        return $response;
     }
 
     /**
@@ -33,11 +33,11 @@ class SummonerRepository extends BaseApiRepository implements SummonerRepository
      * @param int $id
      * @return object
      */
-    public function getSummonerBySummonerId($id)
+    public function getSummonerBySummonerId(int $id)
     {
-        $response = $this->client->request('GET', $this->buildUrl('summoners/' . $id));
+        $response = $this->apiRequest('GET', 'summoners/' . $id);
 
-        return $this->parseResponse($response->getBody());
+        return $response;
     }
 
     /**
@@ -46,11 +46,11 @@ class SummonerRepository extends BaseApiRepository implements SummonerRepository
      * @param int $id
      * @return object
      */
-    public function getSummonerByAccountId($id)
+    public function getSummonerByAccountId(int $id)
     {
-        $response = $this->client->request('GET', $this->buildUrl('summoners/by-account/' . $id));
+        $response = $this->apiRequest('GET', 'summoners/by-account/' . $id);
 
-        return $this->parseResponse($response->getBody());
+        return $response;
     }
 
 }

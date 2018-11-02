@@ -4,9 +4,9 @@ namespace App\Contracts\Repositories;
 
 interface SummonerRepositoryInterface
 {
-    public function getSummonerByName($name);
+    public function getSummonerByName(string $name);
 
-    public function getSummonerBySummonerId($id);
+    public function getSummonerBySummonerId(int $id);
 
-    public function getSummonerByAccountId($id);
+    public function getSummonerByAccountId(int $id);
 }
