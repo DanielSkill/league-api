@@ -14,5 +14,10 @@ return [
     /**
      * Default region to make the requests against
      */
-    'default-region' => env('DEFAULT_REGION', 'EUW1')
+    'default-region' => env('DEFAULT_REGION', 'EUW1'),
+
+    /**
+     * Default region to make the requests against
+     */
+    'api-version' => env('RIOT_API_VERSION', '4')
 ];
