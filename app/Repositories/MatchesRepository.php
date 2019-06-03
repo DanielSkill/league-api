@@ -17,26 +17,14 @@ class MatchesRepository extends BaseApiRepository implements MatchesRepositoryIn
      * Get a summoners matchlist by their account id, never allow more than 20 games
      * fetched at a time to prevent hitting rate-limits
      *
-     * @param int $id
-     * @param int|null $end_time
-     * @param int|null $begin_index
-     * @param int|null $champion
-     * @param int|null $end_index
-     * @param int|null $queue
-     * @param int|null $season
+     * @param mixed $id
+     * @param array $options
      * @return array
      */
-    public function getMatchListByAccountId(int $id, int $end_time = null, int $begin_index = null, int $champion = null, int $end_index = 10, int $queue = null, int $season = null)
+    public function getMatchListByAccountId($id, array $options)
     {
         // Get the initial list of games to use the gameId for more detailed info
-        $match_list = $this->apiRequest('GET', 'matchlists/by-account/' . $id, [
-            'endTime' => $end_time,
-            'beginIndex' => $begin_index,
-            'champion' => $champion,
-            'endIndex' => $end_index,
-            'queue' => $queue,
-            'season' => $season,
-        ]);
+        $match_list = $this->apiRequest('GET', 'matchlists/by-account/' . $id, $options);
 
         $match_collection = collect();
 

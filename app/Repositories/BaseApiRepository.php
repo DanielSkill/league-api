@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 
 class BaseApiRepository
 {
@@ -13,7 +12,7 @@ class BaseApiRepository
      * @var string
      */
     protected $type;
-    
+
     /**
      * Server to perform the request against
      *
@@ -41,7 +40,7 @@ class BaseApiRepository
 
     /**
      * Specified server
-     * 
+     *
      * @param  string $server
      * @return object
      */
@@ -62,7 +61,7 @@ class BaseApiRepository
     {
         $this->server = $this->server != null ? $this->server : config('riot.default-region');
 
-        return 'https://' . $this->server . '.api.riotgames.com/lol/' . $this->type . '/v3/' . $end;
+        return 'https://' . $this->server . '.api.riotgames.com/lol/' . $this->type . '/v' . config('riot.api-version') . '/' . $end;
     }
 
     /**
@@ -70,7 +69,7 @@ class BaseApiRepository
      *
      * @param object $response
      * @return object
-     */     
+     */
     protected function parseResponse($response)
     {
         return json_decode($response, true);
