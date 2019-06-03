@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 
 class BaseApiRepository
 {

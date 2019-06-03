@@ -28,9 +28,9 @@ class MatchListController extends Controller
      * @param int|string $identity
      * @return Illuminate\Http\Response
      */
-    public function getMatchesByIdentity($identity)
+    public function getMatchesByIdentity(Request $request, $identity)
     {
-        $matches = $this->matchesRepository->getMatchListByAccountId($identity);
+        $matches = $this->matchesRepository->getMatchListByAccountId($identity, $request->toArray());
 
         return response()->json($matches);
     }
