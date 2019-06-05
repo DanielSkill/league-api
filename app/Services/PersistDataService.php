@@ -12,11 +12,8 @@ class PersistDataService
      *
      * @return void
      */
-    public function saveChampionsData()
+    public function saveChampionsData($champions)
     {
-        $champions_file = Storage::disk('public')->get('championsFull.json');
-        $champions = json_decode($champions_file, true);
-
         $data = collect();
 
         foreach ($champions['data'] as $key => $champion) {
