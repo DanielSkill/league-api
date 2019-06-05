@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Support\DDragonAPI\DDragonDataApi;
 use Illuminate\Support\Facades\Storage;
+use App\Services\PersistDataService;
 
 class ImportStaticData extends Command
 {
@@ -28,15 +29,21 @@ class ImportStaticData extends Command
     protected $ddragonApi;
 
     /**
+     * @var PersistDataService
+     */
+    protected $persistDataService;
+
+    /**
      * Create a new command instance.
      *
      * @return void
      */
-    public function __construct(DDragonDataApi $ddragonApi)
+    public function __construct(DDragonDataApi $ddragonApi, PersistDataService $persistDataService)
     {
         parent::__construct();
 
         $this->ddragonApi = $ddragonApi;
+        $this->persistDataService = $persistDataService;
     }
 
     /**
@@ -48,12 +55,15 @@ class ImportStaticData extends Command
     {
         $data = [
             'champions' => $this->ddragonApi->getChampions(),
+            'championsFull' => $this->ddragonApi->getChampions(true),
             'runes' => $this->ddragonApi->getRunes(),
             'profileicons' => $this->ddragonApi->getProfileIcons(),
             'items' => $this->ddragonApi->getItems(),
             'maps' => $this->ddragonApi->getMaps(),
             'summoners' => $this->ddragonApi->getSummonerSpells()
         ];
+
+        $this->persistDataService->saveChampionsData();
 
         // TODO: write all data into database (optional)
         foreach ($data as $key => $item) {
