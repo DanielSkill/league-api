@@ -12,4 +12,24 @@ class Match extends Model
      * @var array
      */
     protected $guarded = [];
+
+    /**
+     * Participants relationship
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function participants()
+    {
+        return $this->hasMany('App\Models\Participant', 'match_id', 'game_id');
+    }
+
+    /**
+     * Teams relationship (2 teams per game)
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function teams()
+    {
+        return $this->hasMany('App\Models\Team', 'match_id', 'match_id');
+    }
 }
