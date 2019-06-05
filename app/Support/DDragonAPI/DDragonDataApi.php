@@ -13,7 +13,7 @@ class DDragonDataApi extends BaseApiClient
     {
         $file = $full ? 'championFull' : 'champion';
 
-        return $this->apiRequest('GET', $file);
+        return $this->getFile($file);
     }
 
     /**
@@ -23,7 +23,7 @@ class DDragonDataApi extends BaseApiClient
      */
     public function getRunes()
     {
-        return $this->apiRequest('GET', 'runesReforged');
+        return $this->getFile('runesReforged');
     }
 
     /**
@@ -33,7 +33,7 @@ class DDragonDataApi extends BaseApiClient
      */
     public function getProfileIcons()
     {
-        return $this->apiRequest('GET', 'profileicon');
+        return $this->getFile('profileicon');
     }
 
     /**
@@ -43,7 +43,7 @@ class DDragonDataApi extends BaseApiClient
      */
     public function getItems()
     {
-        return $this->apiRequest('GET', 'item');
+        return $this->getFile('item');
     }
 
     /**
@@ -53,7 +53,7 @@ class DDragonDataApi extends BaseApiClient
      */
     public function getMaps()
     {
-        return $this->apiRequest('GET', 'map');
+        return $this->getFile('map');
     }
 
     /**
@@ -63,6 +63,6 @@ class DDragonDataApi extends BaseApiClient
      */
     public function getSummonerSpells()
     {
-        return $this->apiRequest('GET', 'summoner');
+        return $this->getFile('summoner');
     }
 }

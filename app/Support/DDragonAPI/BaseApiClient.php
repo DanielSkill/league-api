@@ -7,19 +7,15 @@ use GuzzleHttp\Client;
 abstract class BaseApiClient
 {
     /**
-     * A wrapper method for making api calls to the riot api
+     * A wrapper method for getting json data files from ddragon
      *
-     * @param string $method
-     * @param string $url
-     * @param array $params
+     * @param string $file
      * @return mixed
      */
-    public function apiRequest(string $method, string $url, array $params = [])
+    public function getFile(string $file, array $params = [])
     {
         $response = $this->getClient()
-            ->$method($this->buildUrl($url), [
-                'query' => $params
-            ]);
+            ->get($this->buildUrl($file));
 
         return $this->parseResponse($response->getBody());
     }
