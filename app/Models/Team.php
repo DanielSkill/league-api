@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Participant extends Model
+class Team extends Model
 {
     /**
      * Array of protected attributes
@@ -19,6 +19,6 @@ class Participant extends Model
      * @var array
      */
     protected $casts = [
-        'stats' => 'object',
+        'bans' => 'array',
     ];
 }

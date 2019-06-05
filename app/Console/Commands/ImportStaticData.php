@@ -63,7 +63,7 @@ class ImportStaticData extends Command
             'summoners' => $this->ddragonApi->getSummonerSpells()
         ];
 
-        $this->persistDataService->saveChampionsData();
+        $this->persistDataService->saveChampionsData($data['championsFull']);
 
         // TODO: write all data into database (optional)
         foreach ($data as $key => $item) {
