@@ -11,16 +11,12 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Route::group(['prefix' => 'api'], function() {
     // Summoner routes
     Route::get('/summoner/by-name/{name}/{server?}', 'SummonerController@byName');
     Route::get('/summoner/by-summonerid/{id}/{server?}', 'SummonerController@bySummonerId');
     Route::get('/summoner/by-accountid/{id}/{server?}', 'SummonerController@byAccountId');
-    
+
     Route::get('/matchlist/by-identity/{identity}', 'MatchListController@getMatchesByIdentity');
 
     Route::get('/profile/statistics/{identity}', 'ProfileController@getStatistics');

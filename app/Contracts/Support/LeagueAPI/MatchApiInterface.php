@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Contracts\Repositories;
+namespace App\Contracts\Support\LeagueAPI;
 
-interface MatchesRepositoryInterface
+interface MatchApiInterface
 {
     public function getMatchListByAccountId($id, array $options);
 }
