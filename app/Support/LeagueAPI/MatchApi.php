@@ -34,7 +34,10 @@ class MatchApi extends BaseApiClient implements MatchApiInterface
             $match_details = $this->getMatchDetailsByGameId($match['gameId']);
             $match_timeline = $this->getMatchTimelineByGameId($match['gameId']);
 
-            $match_collection->push($match_details);
+            $match_collection->push([
+                    'details' => $match_details,
+                    'timeline' => $match_timeline,
+                ]);
         }
 
         return $match_collection->toArray();
