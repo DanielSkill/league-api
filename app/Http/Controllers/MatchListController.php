@@ -38,9 +38,7 @@ class MatchListController extends Controller
     public function getMatchesByIdentity(Request $request, $identity)
     {
         $matches = $this->matchApi->getMatchListByAccountId($identity, $request->toArray());
-
-        // $this->matchService->saveMatches($matches);
-
+        
         return response()->json($matches);
     }
 }

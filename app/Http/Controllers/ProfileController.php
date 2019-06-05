@@ -38,19 +38,22 @@ class ProfileController extends Controller
     {
         $summoner = $this->summonerRepository->getSummonerByName($name);
 
-        $this->matchService->loadRecentGames($summoner->account_id);
-
         return Summoner::with('matches.participants')->find($summoner->id);
     }
 
-    public function updateProfile($identity)
-    {
-        // Find summoner if already in database
+    /**
+     * See if we don't have any of the users recent past games and save required games to
+     * the database, return new summoner information after.
+     *
+     * @param string $name
+     * @return Response
+     */
+    public function updateProfile($name)
+    {        
+        $summoner = $this->summonerRepository->getSummonerByName($name);
 
-        // If they have no games fetch past 10 games
-            // find matchlist then filter out all games already stored in the database
-            // and only fetch the detailed information for games that we don't currently have
-        
-        // Return summoner information with
+        $this->matchService->loadRecentGames($summoner->account_id);
+
+        return Summoner::with('matches.participants')->find($summoner->id);
     }
 }

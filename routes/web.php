@@ -20,4 +20,5 @@ Route::group(['prefix' => 'api'], function() {
     Route::get('/matchlist/by-identity/{identity}', 'MatchListController@getMatchesByIdentity');
 
     Route::get('/profile/{name}', 'ProfileController@getProfile');
+    Route::get('/profile/update/{name}', 'ProfileController@updateProfile');
 });
