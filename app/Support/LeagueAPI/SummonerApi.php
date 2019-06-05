@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Support\LeagueAPI;
 
-use GuzzleHttp\Client;
-use App\Contracts\Repositories\SummonerRepositoryInterface;
+use App\Support\LeagueAPI\BaseApiClient;
+use App\Contracts\Support\LeagueAPI\SummonerApiInterface;
 
-class SummonerRepository extends BaseApiRepository implements SummonerRepositoryInterface
+class SummonerApi extends BaseApiClient implements SummonerApiInterface
 {
     /**
      * Type of api data request

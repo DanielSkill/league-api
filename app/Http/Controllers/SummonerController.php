@@ -3,23 +3,23 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Contracts\Repositories\SummonerRepositoryInterface;
+use App\Contracts\Support\LeagueAPI\SummonerApiInterface;
 
 class SummonerController extends Controller
 {
     /**
-     * @var SummonerRepositoryInterface
+     * @var SummonerApiInterface
      */
-    protected $summonerRepository;
+    protected $summonerApi;
 
     /**
      * SummonerController construct
      *
-     * @param SummonerRepositoryInterface $summonerRepository
+     * @param SummonerApiInterface $summonerApi
      */
-    public function __construct(SummonerRepositoryInterface $summonerRepository)
+    public function __construct(SummonerApiInterface $summonerApi)
     {
-        $this->summonerRepository = $summonerRepository;
+        $this->summonerApi = $summonerApi;
     }
 
     /**
@@ -31,7 +31,7 @@ class SummonerController extends Controller
      */
     public function byName(string $name, string $server = null)
     {
-        $user = $this->summonerRepository
+        $user = $this->summonerApi
             ->server($server)
             ->getSummonerByName($name);
 
@@ -47,7 +47,7 @@ class SummonerController extends Controller
      */
     public function bySummonerId(int $id, string $server = null)
     {
-        $user = $this->summonerRepository
+        $user = $this->summonerApi
             ->server($server)
             ->getSummonerBySummonerid($id);
 
@@ -56,14 +56,14 @@ class SummonerController extends Controller
 
     /**
      * Get a summoner by their name
-     * 
+     *
      * @param int $id
      * @param string $server
      * @return Illuminate\Http\Response
      */
     public function byAccountId(int $id, string $server = null)
     {
-        $user = $this->summonerRepository
+        $user = $this->summonerApi
             ->server($server)
             ->getSummonerByAccountId($id);
 

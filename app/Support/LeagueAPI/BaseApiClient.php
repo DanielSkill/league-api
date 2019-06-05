@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Support\LeagueAPI;
 
 use GuzzleHttp\Client;
 
-class BaseApiRepository
+abstract class BaseApiClient
 {
     /**
      * Type of request to the api

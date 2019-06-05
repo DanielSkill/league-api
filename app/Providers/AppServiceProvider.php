@@ -24,13 +24,13 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            'App\Contracts\Repositories\SummonerRepositoryInterface',
-            'App\Repositories\SummonerRepository'
+            'App\Contracts\Support\LeagueAPI\SummonerApiInterface',
+            'App\Support\LeagueAPI\SummonerApi'
         );
 
         $this->app->bind(
-            'App\Contracts\Repositories\MatchesRepositoryInterface',
-            'App\Repositories\MatchesRepository'
+            'App\Contracts\Support\LeagueAPI\MatchApiInterface',
+            'App\Support\LeagueAPI\MatchApi'
         );
     }
 }

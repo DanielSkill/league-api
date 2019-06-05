@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Support\LeagueAPI;
 
-use App\Contracts\Repositories\MatchesRepositoryInterface;
+use App\Support\LeagueAPI\BaseApiClient;
+use App\Contracts\Support\LeagueAPI\MatchApiInterface;
 
-class MatchesRepository extends BaseApiRepository implements MatchesRepositoryInterface
+class MatchApi extends BaseApiClient implements MatchApiInterface
 {
     /**
      * Type of api data request
@@ -31,6 +32,7 @@ class MatchesRepository extends BaseApiRepository implements MatchesRepositoryIn
         // For each match get more detailed game details
         foreach ($match_list["matches"] as $match) {
             $match_details = $this->getMatchDetailsByGameId($match['gameId']);
+            $match_timeline = $this->getMatchTimelineByGameId($match['gameId']);
 
             $match_collection->push($match_details);
         }
@@ -44,10 +46,23 @@ class MatchesRepository extends BaseApiRepository implements MatchesRepositoryIn
      * @param int $id
      * @return object
      */
-    public function getMatchDetailsByGameId(int $id)
+    public function getMatchDetailsByGameId($id)
     {
         $match_details = $this->apiRequest('GET', 'matches/' . $id);
 
         return $match_details;
+    }
+
+    /**
+     * Get game timeline by a game id
+     *
+     * @param int $id
+     * @return object
+     */
+    public function getMatchTimelineByGameId($id)
+    {
+        $match_timeline = $this->apiRequest('GET', 'timelines/by-match/' . $id);
+
+        return $match_timeline;
     }
 }
