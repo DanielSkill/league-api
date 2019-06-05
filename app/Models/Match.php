@@ -30,6 +30,6 @@ class Match extends Model
      */
     public function teams()
     {
-        return $this->hasMany('App\Models\Team', 'match_id', 'match_id');
+        return $this->hasMany('App\Models\Team', 'match_id', 'game_id');
     }
 }
