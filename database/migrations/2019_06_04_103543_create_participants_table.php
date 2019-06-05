@@ -15,6 +15,14 @@ class CreateParticipantsTable extends Migration
     {
         Schema::create('participants', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('summoner_id');
+            $table->unsignedBigInteger('match_id');
+            $table->integer('team_id');
+            $table->integer('champion_id');
+            $table->integer('summoner_spell_1');
+            $table->integer('summoner_spell_2');
+            $table->string('highest_achieved_season_tier')->nullable();
+            $table->json('stats');
             $table->timestamps();
         });
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Contracts\Support\LeagueAPI\MatchApiInterface;
+use App\Services\MatchService;
 
 class MatchListController extends Controller
 {
@@ -13,13 +14,19 @@ class MatchListController extends Controller
     protected $matchApi;
 
     /**
+     * @var MatchService
+     */
+    protected $matchService;
+
+    /**
      * MatchListController Constructor
      *
      * @param MatchApiInterface $matchApi
      */
-    public function __construct(MatchApiInterface $matchApi)
+    public function __construct(MatchApiInterface $matchApi, MatchService $matchService)
     {
         $this->matchApi =  $matchApi;
+        $this->matchService =  $matchService;
     }
 
     /**
@@ -31,6 +38,8 @@ class MatchListController extends Controller
     public function getMatchesByIdentity(Request $request, $identity)
     {
         $matches = $this->matchApi->getMatchListByAccountId($identity, $request->toArray());
+
+        $this->matchService->saveMatches($matches);
 
         return response()->json($matches);
     }
