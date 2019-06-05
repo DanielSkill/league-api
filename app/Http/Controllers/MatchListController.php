@@ -39,7 +39,7 @@ class MatchListController extends Controller
     {
         $matches = $this->matchApi->getMatchListByAccountId($identity, $request->toArray());
 
-        $this->matchService->saveMatches($matches);
+        // $this->matchService->saveMatches($matches);
 
         return response()->json($matches);
     }

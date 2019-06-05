@@ -18,14 +18,14 @@ class MatchApi extends BaseApiClient implements MatchApiInterface
      * Get a summoners matchlist by their account id, never allow more than 20 games
      * fetched at a time to prevent hitting rate-limits
      *
-     * @param mixed $id
+     * @param string $id
      * @param array $options
      * @return array
      */
     public function getMatchListByAccountId($id, array $options)
     {
         // Get the initial list of games to use the gameId for more detailed info
-        $match_list = $this->apiRequest('GET', 'matchlists/by-account/' . $id, $options);
+        $match_list = $this->getMatchList($id, $options);
 
         $match_collection = collect();
 
@@ -41,6 +41,20 @@ class MatchApi extends BaseApiClient implements MatchApiInterface
         }
 
         return $match_collection->toArray();
+    }
+
+    /**
+     * Get users recent matchlist
+     *
+     * @param string $id
+     * @param array $options
+     * @return void
+     */
+    public function getMatchList($id, array $options)
+    {
+        $match_list = $this->apiRequest('GET', 'matchlists/by-account/' . $id, $options);
+
+        return $match_list;
     }
 
     /**

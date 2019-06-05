@@ -2,13 +2,28 @@
 
 namespace App\Services;
 
+use App\Models\Team;
 use App\Models\Match;
 use App\Models\Summoner;
-use App\Models\Team;
 use App\Models\Participant;
+use App\Contracts\Support\LeagueAPI\MatchApiInterface;
+use Illuminate\Support\Arr;
 
 class MatchService
 {
+    /**
+     * @var MatchApiInterface
+     */
+    protected $matchApi;
+
+    /**
+     * @param MatchApiInterface $matchApi
+     */
+    public function __construct(MatchApiInterface $matchApi)
+    {
+        $this->matchApi = $matchApi;        
+    }
+
     /**
      * Save a match to the database
      *
@@ -63,7 +78,7 @@ class MatchService
                     'dragon_kills' => $team['dragonKills'],
                     'vilemaw_kills' => $team['vilemawKills'],
                     'rift_herald_kills' => $team['riftHeraldKills'],
-                    'bans' => json_encode($team['bans'])
+                    'bans' => $team['bans']
                 ]);
             }
 
@@ -76,7 +91,7 @@ class MatchService
                     'summoner_spell_1' => $participant['spell1Id'],
                     'summoner_spell_2' => $participant['spell2Id'],
                     'highest_achieved_season_tier' => $participant['highestAchievedSeasonTier'] ?? null,
-                    'stats' => json_encode($participant['stats']),
+                    'stats' => $participant['stats'],
                 ]);
             }
         }
@@ -92,7 +107,39 @@ class MatchService
     public function saveMatches($matches)
     {
         foreach ($matches as $match) {
-            $this->saveMatch($match);
+            $match_details = $this->matchApi->getMatchDetailsByGameId($match['gameId']);
+            $match_timeline = $this->matchApi->getMatchTimelineByGameId($match['gameId']);
+
+            $detailed_match = [
+                'details' => $match_details,
+                'timeline' => $match_timeline,
+            ];
+
+            $this->saveMatch($detailed_match);
         }
+    }
+
+     /**
+     * Look at users past 10 games and save any that aren't already in the database
+     *
+     * @param string $id
+     * @param integer $count
+     * @return array
+     */
+    public function loadRecentGames(string $id, int $count = 10)
+    {
+        // get array of games
+        $games = $this->matchApi->getMatchlist($id, [
+            'endIndex' => $count
+        ]);
+
+        // get games already in the database
+        $existing_matches = Match::whereIn('game_id', array_column($games['matches'], 'gameId'))->pluck('game_id');
+
+        $matches_to_fetch = array_filter($games['matches'], function ($game) use ($existing_matches) {
+            return ! in_array($game['gameId'], $existing_matches->toArray());
+        });
+
+        $this->saveMatches($matches_to_fetch);
     }
 }
