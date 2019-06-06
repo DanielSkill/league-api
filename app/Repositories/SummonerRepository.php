@@ -33,7 +33,7 @@ class SummonerRepository
     {
         // find summoner in database
         // TODO: make the find work like the api for example 'h ell o' should match 'hello'
-        $summoner = Summoner::where('name', $name)->first();
+        $summoner = Summoner::where('name', $name)->where('server', $server)->first();
 
         // match data doesn't provide summoner level so lets update that if it is null
         if (! $summoner || $summoner->summoner_level == null || $update) {
