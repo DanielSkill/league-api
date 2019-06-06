@@ -3,11 +3,13 @@
 namespace App\Services;
 
 use App\Models\Team;
+use App\Models\Event;
 use App\Models\Frame;
 use App\Models\Match;
 use App\Models\Summoner;
 use App\Models\Participant;
 use Illuminate\Support\Arr;
+use App\Models\ParticipantFrame;
 use App\Contracts\Support\LeagueAPI\MatchApiInterface;
 
 class MatchService
@@ -107,8 +109,9 @@ class MatchService
 
                 $participant_frames = collect($frame['participantFrames']);
 
-                $participant_frames->transform(function ($item) {
+                $participant_frames->transform(function ($item) use ($stored_frame) {
                     return [
+                        'frame_id' => $stored_frame->id,
                         'current_gold' => $item['currentGold'],
                         'participant_id' => $item['participantId'],
                         'total_gold' => $item['totalGold'],
@@ -125,8 +128,9 @@ class MatchService
 
                 $events = collect($frame['events']);
 
-                $events->transform(function ($item) {
+                $events->transform(function ($item) use ($stored_frame) {
                     return [
+                        'frame_id' => $stored_frame->id,
                         'type' => $item['type'],
                         'team_id' => $item['teamId'] ?? null,
                         'participant_id' => $item['participantId'] ?? null,
@@ -136,7 +140,7 @@ class MatchService
                         'killer_id' => $item['killerId'] ?? null,
                         'level_up_type' => $item['levelUpType'] ?? null,
                         'point_captured' => $item['pointCaptured'] ?? null,
-                        'assisting_participant_ids' => $item['assistingParticipantIds'] ?? null,
+                        'assisting_participant_ids' => null,
                         'ward_type' => $item['wardType'] ?? null,
                         'monster_type' => $item['monsterType'] ?? null,
                         'skill_shot' => $item['skillShot'] ?? null,
@@ -154,8 +158,11 @@ class MatchService
                     ];
                 });
 
-                $stored_frame->participantFrames()->createMany($participant_frames->toArray());
-                $stored_frame->events()->createMany($events->toArray());
+                // $stored_frame->participantFrames()->createMany($participant_frames->toArray());
+                // $stored_frame->events()->createMany($events->toArray());
+
+                ParticipantFrame::insert($participant_frames->toArray());
+                Event::insert($events->toArray());
             }
         }
 
@@ -196,7 +203,7 @@ class MatchService
      * @param integer $count
      * @return array
      */
-    public function loadRecentGames(Summoner $summoner, int $count = 1)
+    public function loadRecentGames(Summoner $summoner, int $count = 10)
     {
         // get array of games
         $games = $this->matchApi->server($summoner->server)
