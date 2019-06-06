@@ -53,4 +53,30 @@ class MatchApi extends BaseApiClient implements MatchApiInterface
 
         return $match_timeline;
     }
+
+    /**
+     * Get game details by a game id
+     *
+     * @param int $id
+     * @return void
+     */
+    public function queueMatchDetailsByGameId($id)
+    {
+        $this->queueApiRequest('details-' . $id, 'matches/' . $id);
+
+        return $this;
+    }
+
+    /**
+     * Get game timeline by a game id
+     *
+     * @param int $id
+     * @return void
+     */
+    public function queueMatchTimelineByGameId($id)
+    {
+       $this->queueApiRequest('timeline-' . $id, 'timelines/by-match/' . $id);
+
+       return $this;
+    }
 }

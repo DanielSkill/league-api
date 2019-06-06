@@ -109,16 +109,26 @@ class MatchService
     public function saveMatches($matches)
     {
         foreach ($matches as $match) {
-            $match_details = $this->matchApi->getMatchDetailsByGameId($match['gameId']);
-            $match_timeline = $this->matchApi->getMatchTimelineByGameId($match['gameId']);
+            $match_details = $this->matchApi->queueMatchDetailsByGameId($match['gameId']);
+            $match_timeline = $this->matchApi->queueMatchTimelineByGameId($match['gameId']);
 
-            $detailed_match = [
-                'details' => $match_details,
-                'timeline' => $match_timeline,
-            ];
+            // $detailed_match = [
+            //     'details' => $match_details,
+            //     'timeline' => $match_timeline,
+            // ];
 
-            $this->saveMatch($detailed_match);
+            // $this->saveMatch($detailed_match);
         }
+
+        $matches = $this->matchApi->getAllQueuedRequests();
+
+        $response_collection = [];
+
+        foreach ($matches as $match) {
+            $response_collection[] = json_decode($match['value']->getBody());
+        }
+
+        dd($response_collection);
     }
 
      /**
@@ -128,7 +138,7 @@ class MatchService
      * @param integer $count
      * @return array
      */
-    public function loadRecentGames(Summoner $summoner, int $count = 10)
+    public function loadRecentGames(Summoner $summoner, int $count = 20)
     {
         // get array of games
         $games = $this->matchApi->server($summoner->server)
