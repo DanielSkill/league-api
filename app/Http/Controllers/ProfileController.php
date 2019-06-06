@@ -52,7 +52,7 @@ class ProfileController extends Controller
      */
     public function updateProfile(string $server, string $name)
     {
-        $summoner = $this->summonerRepository->getSummonerByName($server, $name);
+        $summoner = $this->summonerRepository->getSummonerByName($server, $name, true);
 
         $this->matchService->loadRecentGames($summoner);
 

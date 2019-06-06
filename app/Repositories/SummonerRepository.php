@@ -26,16 +26,17 @@ class SummonerRepository
      *
      * @param string $server
      * @param string $name
+     * @param bool $update
      * @return object
      */
-    public function getSummonerByName(string $server, string $name)
+    public function getSummonerByName(string $server, string $name, bool $update = false)
     {
         // find summoner in database
         // TODO: make the find work like the api for example 'h ell o' should match 'hello'
         $summoner = Summoner::where('name', $name)->first();
 
         // match data doesn't provide summoner level so lets update that if it is null
-        if (! $summoner || $summoner->summoner_level == null) {
+        if (! $summoner || $summoner->summoner_level == null || $update) {
             $response = $this->summonerApi->server($server)->getSummonerByName($name);
 
             $summoner = Summoner::updateOrCreate(
@@ -51,6 +52,7 @@ class SummonerRepository
                     'name' => $response['name'],
                     'summoner_level' => $response['summonerLevel'],
                     'profile_icon_id' => $response['profileIconId'],
+                    'revision_date' => $response['revisionDate'],
                 ]
             );
         }
