@@ -15,6 +15,8 @@ class CreateFramesTable extends Migration
     {
         Schema::create('frames', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedBigInteger('match_id');
+            $table->bigInteger('timestamp');
             $table->timestamps();
         });
     }

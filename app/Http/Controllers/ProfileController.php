@@ -56,6 +56,7 @@ class ProfileController extends Controller
 
         $this->matchService->loadRecentGames($summoner);
 
-        return Summoner::with('matches.participants')->find($summoner->id);
+        return view('welcome');
+        // return Summoner::with('matches.participants', 'matches.teams', 'matches.frames.participantFrames')->find($summoner->id);
     }
 }

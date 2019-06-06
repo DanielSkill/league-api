@@ -62,7 +62,7 @@ class MatchApi extends BaseApiClient implements MatchApiInterface
      */
     public function queueMatchDetailsByGameId($id)
     {
-        $this->queueApiRequest('details-' . $id, 'matches/' . $id);
+        $this->queueApiRequest($id . '-details', 'matches/' . $id);
 
         return $this;
     }
@@ -75,7 +75,7 @@ class MatchApi extends BaseApiClient implements MatchApiInterface
      */
     public function queueMatchTimelineByGameId($id)
     {
-       $this->queueApiRequest('timeline-' . $id, 'timelines/by-match/' . $id);
+       $this->queueApiRequest($id . '-timeline', 'timelines/by-match/' . $id);
 
        return $this;
     }

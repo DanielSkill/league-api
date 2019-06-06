@@ -32,4 +32,14 @@ class Match extends Model
     {
         return $this->hasMany('App\Models\Team', 'match_id', 'game_id');
     }
+
+    /**
+     * Detailed timeline of the game
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function frames()
+    {
+        return $this->hasMany('App\Models\Frame', 'match_id', 'game_id');
+    }
 }

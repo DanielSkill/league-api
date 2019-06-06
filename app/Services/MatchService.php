@@ -3,11 +3,12 @@
 namespace App\Services;
 
 use App\Models\Team;
+use App\Models\Frame;
 use App\Models\Match;
 use App\Models\Summoner;
 use App\Models\Participant;
-use App\Contracts\Support\LeagueAPI\MatchApiInterface;
 use Illuminate\Support\Arr;
+use App\Contracts\Support\LeagueAPI\MatchApiInterface;
 
 class MatchService
 {
@@ -26,6 +27,7 @@ class MatchService
 
     /**
      * Save a match to the database
+     * TODO: TIDY UP AND OPTIMISE
      *
      * @param mixed $match
      * @return void
@@ -96,6 +98,65 @@ class MatchService
                     'stats' => $participant['stats'],
                 ]);
             }
+
+            foreach ($match['timeline']['frames'] as $frame) {
+                $stored_frame = Frame::create([
+                    'match_id' => $match['details']['gameId'],
+                    'timestamp' => $frame['timestamp']
+                ]);
+
+                $participant_frames = collect($frame['participantFrames']);
+
+                $participant_frames->transform(function ($item) {
+                    return [
+                        'current_gold' => $item['currentGold'],
+                        'participant_id' => $item['participantId'],
+                        'total_gold' => $item['totalGold'],
+                        'team_score' => $item['teamScore'] ?? 0,
+                        'level' => $item['level'],
+                        'minions_killed' => $item['minionsKilled'],
+                        'dominion_score' => $item['dominionScore'] ?? 0,
+                        'position_x' => $item['position']['x'] ?? 0,
+                        'position_y' => $item['position']['y'] ?? 0,
+                        'xp' => $item['xp'],
+                        'jungle_minions_killed' => $item['jungleMinionsKilled'],
+                    ];
+                });
+
+                $events = collect($frame['events']);
+
+                $events->transform(function ($item) {
+                    return [
+                        'type' => $item['type'],
+                        'team_id' => $item['teamId'] ?? null,
+                        'participant_id' => $item['participantId'] ?? null,
+                        'event_type' => $item['eventType'] ?? null,
+                        'tower_type' => $item['towerType'] ?? null,
+                        'ascended_type' => $item['ascendedType'] ?? null,
+                        'killer_id' => $item['killerId'] ?? null,
+                        'level_up_type' => $item['levelUpType'] ?? null,
+                        'point_captured' => $item['pointCaptured'] ?? null,
+                        'assisting_participant_ids' => $item['assistingParticipantIds'] ?? null,
+                        'ward_type' => $item['wardType'] ?? null,
+                        'monster_type' => $item['monsterType'] ?? null,
+                        'skill_shot' => $item['skillShot'] ?? null,
+                        'victim_id' => $item['victimId'] ?? null,
+                        'timestamp' => $item['timestamp'] ?? null,
+                        'after_id' => $item['afterId'] ?? null,
+                        'monster_sub_type' => $item['monsterSubType'] ?? null,
+                        'lane_type' => $item['laneType'] ?? null,
+                        'item_id' => $item['itemId'] ?? null,
+                        'building_type' => $item['buildingType'] ?? null,
+                        'creator_id' => $item['creatorId'] ?? null,
+                        'position_x' => $item['position']['x'] ?? null,
+                        'position_y' => $item['position']['y'] ?? null,
+                        'before_id' => $item['beforeId'] ?? null,
+                    ];
+                });
+
+                $stored_frame->participantFrames()->createMany($participant_frames->toArray());
+                $stored_frame->events()->createMany($events->toArray());
+            }
         }
 
     }
@@ -111,24 +172,21 @@ class MatchService
         foreach ($matches as $match) {
             $match_details = $this->matchApi->queueMatchDetailsByGameId($match['gameId']);
             $match_timeline = $this->matchApi->queueMatchTimelineByGameId($match['gameId']);
-
-            // $detailed_match = [
-            //     'details' => $match_details,
-            //     'timeline' => $match_timeline,
-            // ];
-
-            // $this->saveMatch($detailed_match);
         }
 
         $matches = $this->matchApi->getAllQueuedRequests();
 
         $response_collection = [];
 
-        foreach ($matches as $match) {
-            $response_collection[] = json_decode($match['value']->getBody());
+        foreach ($matches as $key => $match) {
+            $accessor = explode('-', $key);
+
+            $response_collection[$accessor[0]][$accessor[1]] = json_decode($match['value']->getBody(), true);
         }
 
-        dd($response_collection);
+        foreach ($response_collection as $detailed_match) {
+            $this->saveMatch($detailed_match);
+        }
     }
 
      /**
@@ -138,7 +196,7 @@ class MatchService
      * @param integer $count
      * @return array
      */
-    public function loadRecentGames(Summoner $summoner, int $count = 20)
+    public function loadRecentGames(Summoner $summoner, int $count = 1)
     {
         // get array of games
         $games = $this->matchApi->server($summoner->server)
