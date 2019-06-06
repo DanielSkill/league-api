@@ -18,6 +18,7 @@ class CreateSummonersTable extends Migration
             $table->string('summoner_id');
             $table->string('puuid')->nullable();
             $table->string('account_id');
+            $table->string('server');
             $table->string('name');
             $table->integer('summoner_level')->nullable();
             $table->integer('profile_icon_id');

@@ -31,12 +31,13 @@ class ProfileController extends Controller
     /**
      * Get summoner profile
      *
+     * @param string $server
      * @param string $name
      * @return Response
      */
-    public function getProfile($name)
+    public function getProfile(string $server, string $name)
     {
-        $summoner = $this->summonerRepository->getSummonerByName($name);
+        $summoner = $this->summonerRepository->getSummonerByName($server, $name);
 
         return Summoner::with('matches.participants')->find($summoner->id);
     }
@@ -45,14 +46,15 @@ class ProfileController extends Controller
      * See if we don't have any of the users recent past games and save required games to
      * the database, return new summoner information after.
      *
+     * @param string $server
      * @param string $name
      * @return Response
      */
-    public function updateProfile($name)
-    {        
-        $summoner = $this->summonerRepository->getSummonerByName($name);
+    public function updateProfile(string $server, string $name)
+    {
+        $summoner = $this->summonerRepository->getSummonerByName($server, $name);
 
-        $this->matchService->loadRecentGames($summoner->account_id);
+        $this->matchService->loadRecentGames($summoner);
 
         return Summoner::with('matches.participants')->find($summoner->id);
     }

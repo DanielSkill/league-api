@@ -17,8 +17,6 @@ Route::group(['prefix' => 'api'], function() {
     Route::get('/summoner/by-summonerid/{id}/{server?}', 'SummonerController@bySummonerId');
     Route::get('/summoner/by-accountid/{id}/{server?}', 'SummonerController@byAccountId');
 
-    Route::get('/matchlist/by-identity/{identity}', 'MatchListController@getMatchesByIdentity');
-
-    Route::get('/profile/{name}', 'ProfileController@getProfile');
-    Route::get('/profile/update/{name}', 'ProfileController@updateProfile');
+    Route::get('/profile/{server}/{name}', 'ProfileController@getProfile');
+    Route::get('/profile/{server}/{name}/update', 'ProfileController@updateProfile');
 });

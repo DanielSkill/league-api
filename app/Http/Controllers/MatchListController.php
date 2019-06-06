@@ -35,10 +35,8 @@ class MatchListController extends Controller
      * @param int|string $identity
      * @return Illuminate\Http\Response
      */
-    public function getMatchesByIdentity(Request $request, $identity)
+    public function getSummonerMatchHistory(Request $request, string $name)
     {
-        $matches = $this->matchApi->getMatchListByAccountId($identity, $request->toArray());
-        
-        return response()->json($matches);
+        // implement
     }
 }

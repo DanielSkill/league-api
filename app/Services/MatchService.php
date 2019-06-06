@@ -21,7 +21,7 @@ class MatchService
      */
     public function __construct(MatchApiInterface $matchApi)
     {
-        $this->matchApi = $matchApi;        
+        $this->matchApi = $matchApi;
     }
 
     /**
@@ -50,9 +50,11 @@ class MatchService
             foreach ($match['details']['participantIdentities'] as $summoner) {
                 Summoner::firstOrCreate(
                     [
-                        'summoner_id' => $summoner['player']['summonerId']
+                        'summoner_id' => $summoner['player']['summonerId'],
+                        'server' => $match['details']['platformId']
                     ],
                     [
+                        'server' => $match['details']['platformId'],
                         'summoner_id' => $summoner['player']['summonerId'],
                         'account_id' => $summoner['player']['accountId'],
                         'name' => $summoner['player']['summonerName'],
@@ -95,7 +97,7 @@ class MatchService
                 ]);
             }
         }
-       
+
     }
 
     /**
@@ -126,12 +128,13 @@ class MatchService
      * @param integer $count
      * @return array
      */
-    public function loadRecentGames(string $id, int $count = 10)
+    public function loadRecentGames(Summoner $summoner, int $count = 10)
     {
         // get array of games
-        $games = $this->matchApi->getMatchlist($id, [
-            'endIndex' => $count
-        ]);
+        $games = $this->matchApi->server($summoner->server)
+            ->getMatchlist($summoner->account_id, [
+                'endIndex' => $count
+            ]);
 
         // get games already in the database
         $existing_matches = Match::whereIn('game_id', array_column($games['matches'], 'gameId'))->pluck('game_id');
