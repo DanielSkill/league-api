@@ -58,8 +58,7 @@ class MatchService
                         'summoner_id' => $summoner['player']['summonerId'],
                         'account_id' => $summoner['player']['accountId'],
                         'name' => $summoner['player']['summonerName'],
-                        'profile_icon_id' => $summoner['player']['profileIcon'],
-                        'revision_date' => $summoner['player']['revisionDate']
+                        'profile_icon_id' => $summoner['player']['profileIcon']
                     ]
                 );
             }
