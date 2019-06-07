@@ -6,6 +6,7 @@ use App\Models\Match;
 use Illuminate\Http\Request;
 use App\Services\MatchService;
 use App\Http\Resources\MatchResource;
+use App\Repositories\SummonerRepository;
 use App\Contracts\Support\LeagueAPI\MatchApiInterface;
 
 class MatchListController extends Controller
@@ -21,14 +22,23 @@ class MatchListController extends Controller
     protected $matchService;
 
     /**
+     * @var SummonerRepository
+     */
+    protected $summonerRepository;
+
+    /**
      * MatchListController Constructor
      *
      * @param MatchApiInterface $matchApi
      */
-    public function __construct(MatchApiInterface $matchApi, MatchService $matchService)
+    public function __construct(
+        MatchApiInterface $matchApi,
+        MatchService $matchService,
+        SummonerRepository $summonerRepository)
     {
         $this->matchApi =  $matchApi;
         $this->matchService =  $matchService;
+        $this->summonerRepository =  $summonerRepository;
     }
 
     /**
@@ -37,11 +47,17 @@ class MatchListController extends Controller
      * @param int|string $identity
      * @return Illuminate\Http\Response
      */
-    public function getSummonerMatchHistory(Request $request, string $name)
+    public function getSummonerMatchHistory(Request $request, string $server, string $name)
     {
-        $match = Match::with('teams.participants.summoner')->latest()->first();
+        $summoner = $this->summonerRepository->getSummonerByName($server, $name);
+
+        $matches = Match::with('teams.participants.summoner')
+            ->whereHas('participants', function($q) use ($summoner) {
+                $q->where('summoner_id', $summoner->summoner_id);
+            })
+            ->paginate(20);
 
         // return $match;
-        return new MatchResource($match);
+        return MatchResource::collection($matches);
     }
 }

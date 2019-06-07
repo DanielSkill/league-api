@@ -21,7 +21,7 @@ class MatchResource extends JsonResource
             'duartion' => $this->game_duration,
             'created' => $this->game_creation,
             'blue_team' => new TeamResource($this->teams[0]),
-            'red_team' => new TeamResource($this->teams[1]),
+            'red_team' => new TeamResource($this->teams[1])
         ];
     }
 }

@@ -22,7 +22,7 @@ class ParticipantResource extends JsonResource
             'summoner_spell_1' => $this->summoner_spell_1,
             'summoner_spell_2' => $this->summoner_spell_2,
             'highest_achieved_season_tier' => $this->highest_achieved_season_tier,
-            'stats' => $this->stats
+            'stats' => new StatisticResource($this->stats)
         ];
     }
 }
