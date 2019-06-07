@@ -49,6 +49,7 @@ class MatchService
                 'game_version' => $match['details']['gameVersion'],
                 'game_mode' => $match['details']['gameMode'],
                 'game_type' => $match['details']['gameType'],
+                'timeline' => $match['timeline']
             ]);
 
             foreach ($match['details']['participantIdentities'] as $summoner) {
@@ -99,70 +100,6 @@ class MatchService
                     'highest_achieved_season_tier' => $participant['highestAchievedSeasonTier'] ?? null,
                     'stats' => $participant['stats'],
                 ]);
-            }
-
-            foreach ($match['timeline']['frames'] as $frame) {
-                $stored_frame = Frame::create([
-                    'match_id' => $match['details']['gameId'],
-                    'timestamp' => $frame['timestamp']
-                ]);
-
-                $participant_frames = collect($frame['participantFrames']);
-
-                $participant_frames->transform(function ($item) use ($stored_frame) {
-                    return [
-                        'frame_id' => $stored_frame->id,
-                        'current_gold' => $item['currentGold'],
-                        'participant_id' => $item['participantId'],
-                        'total_gold' => $item['totalGold'],
-                        'team_score' => $item['teamScore'] ?? 0,
-                        'level' => $item['level'],
-                        'minions_killed' => $item['minionsKilled'],
-                        'dominion_score' => $item['dominionScore'] ?? 0,
-                        'position_x' => $item['position']['x'] ?? 0,
-                        'position_y' => $item['position']['y'] ?? 0,
-                        'xp' => $item['xp'],
-                        'jungle_minions_killed' => $item['jungleMinionsKilled'],
-                    ];
-                });
-
-                $events = collect($frame['events']);
-
-                $events->transform(function ($item) use ($stored_frame) {
-                    return [
-                        'frame_id' => $stored_frame->id,
-                        'type' => $item['type'],
-                        'team_id' => $item['teamId'] ?? null,
-                        'participant_id' => $item['participantId'] ?? null,
-                        'event_type' => $item['eventType'] ?? null,
-                        'tower_type' => $item['towerType'] ?? null,
-                        'ascended_type' => $item['ascendedType'] ?? null,
-                        'killer_id' => $item['killerId'] ?? null,
-                        'level_up_type' => $item['levelUpType'] ?? null,
-                        'point_captured' => $item['pointCaptured'] ?? null,
-                        'assisting_participant_ids' => null,
-                        'ward_type' => $item['wardType'] ?? null,
-                        'monster_type' => $item['monsterType'] ?? null,
-                        'skill_shot' => $item['skillShot'] ?? null,
-                        'victim_id' => $item['victimId'] ?? null,
-                        'timestamp' => $item['timestamp'] ?? null,
-                        'after_id' => $item['afterId'] ?? null,
-                        'monster_sub_type' => $item['monsterSubType'] ?? null,
-                        'lane_type' => $item['laneType'] ?? null,
-                        'item_id' => $item['itemId'] ?? null,
-                        'building_type' => $item['buildingType'] ?? null,
-                        'creator_id' => $item['creatorId'] ?? null,
-                        'position_x' => $item['position']['x'] ?? null,
-                        'position_y' => $item['position']['y'] ?? null,
-                        'before_id' => $item['beforeId'] ?? null,
-                    ];
-                });
-
-                // $stored_frame->participantFrames()->createMany($participant_frames->toArray());
-                // $stored_frame->events()->createMany($events->toArray());
-
-                ParticipantFrame::insert($participant_frames->toArray());
-                Event::insert($events->toArray());
             }
         }
 
