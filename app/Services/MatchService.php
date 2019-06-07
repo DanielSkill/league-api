@@ -89,8 +89,8 @@ class MatchService
                 ]);
             }
 
-            foreach ($match['details']['participants'] as $participant) {
-                Participant::create([
+            $participants = collect($match['details']['participants'])->transform(function ($participant) use ($match) {
+                return [
                     'summoner_id' => $match['details']['participantIdentities'][$participant['participantId'] - 1]['player']['summonerId'],
                     'match_id' => $match['details']['gameId'],
                     'team_id' => $participant['teamId'],
@@ -98,9 +98,11 @@ class MatchService
                     'summoner_spell_1' => $participant['spell1Id'],
                     'summoner_spell_2' => $participant['spell2Id'],
                     'highest_achieved_season_tier' => $participant['highestAchievedSeasonTier'] ?? null,
-                    'stats' => $participant['stats'],
-                ]);
-            }
+                    'stats' => json_encode($participant['stats']) // because we use insert it does not touch Eloquent so we need to use json_encode
+                ];
+            });
+
+            Participant::insert($participants->toArray());
         }
 
     }

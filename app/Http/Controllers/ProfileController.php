@@ -56,6 +56,12 @@ class ProfileController extends Controller
 
         $this->matchService->loadRecentGames($summoner, $summoner->isInitialLoad() ? 20 : 10);
 
-        return Summoner::with('matches.participants', 'matches.teams')->find($summoner->id);
+
+        $summoner = Summoner::with('matches.participants', 'matches.teams')->find($summoner->id);
+
+        return $summoner;
+
+        // use for debug bar
+        // return view('welcome', compact('summoner'));
     }
 }
