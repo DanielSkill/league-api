@@ -19,4 +19,6 @@ Route::group(['prefix' => 'api'], function() {
 
     Route::get('/profile/{server}/{name}', 'ProfileController@getProfile');
     Route::get('/profile/{server}/{name}/update', 'ProfileController@updateProfile');
+
+    Route::get('/summoner/{server}/{name}/match-history', 'MatchListController@getSummonerMatchHistory');
 });

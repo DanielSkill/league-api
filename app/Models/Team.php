@@ -21,4 +21,14 @@ class Team extends Model
     protected $casts = [
         'bans' => 'array',
     ];
+
+    /**
+     * Get all participants in a team
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function participants()
+    {
+        return $this->hasMany('App\Models\Participant', 'match_id', 'match_id');
+    }
 }

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Match;
 use Illuminate\Http\Request;
-use App\Contracts\Support\LeagueAPI\MatchApiInterface;
 use App\Services\MatchService;
+use App\Http\Resources\MatchResource;
+use App\Contracts\Support\LeagueAPI\MatchApiInterface;
 
 class MatchListController extends Controller
 {
@@ -37,6 +39,9 @@ class MatchListController extends Controller
      */
     public function getSummonerMatchHistory(Request $request, string $name)
     {
-        // implement
+        $match = Match::with('teams.participants.summoner')->latest()->first();
+
+        // return $match;
+        return new MatchResource($match);
     }
 }

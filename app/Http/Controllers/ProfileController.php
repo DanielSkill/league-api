@@ -39,7 +39,7 @@ class ProfileController extends Controller
     {
         $summoner = $this->summonerRepository->getSummonerByName($server, $name);
 
-        return Summoner::with('matches.participants')->find($summoner->id);
+        return Summoner::with('matches.teams.participants')->find($summoner->id);
     }
 
     /**
