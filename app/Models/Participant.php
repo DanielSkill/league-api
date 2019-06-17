@@ -21,4 +21,14 @@ class Participant extends Model
     protected $casts = [
         'stats' => 'object',
     ];
+
+    /**
+     * The participants summoner details
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function summoner()
+    {
+        return $this->hasOne('App\Models\Summoner', 'summoner_id', 'summoner_id');
+    }
 }

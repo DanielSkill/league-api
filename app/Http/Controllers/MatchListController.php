@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Match;
 use Illuminate\Http\Request;
-use App\Contracts\Support\LeagueAPI\MatchApiInterface;
 use App\Services\MatchService;
+use App\Http\Resources\MatchResource;
+use App\Repositories\SummonerRepository;
+use App\Contracts\Support\LeagueAPI\MatchApiInterface;
 
 class MatchListController extends Controller
 {
@@ -19,14 +22,23 @@ class MatchListController extends Controller
     protected $matchService;
 
     /**
+     * @var SummonerRepository
+     */
+    protected $summonerRepository;
+
+    /**
      * MatchListController Constructor
      *
      * @param MatchApiInterface $matchApi
      */
-    public function __construct(MatchApiInterface $matchApi, MatchService $matchService)
+    public function __construct(
+        MatchApiInterface $matchApi,
+        MatchService $matchService,
+        SummonerRepository $summonerRepository)
     {
         $this->matchApi =  $matchApi;
         $this->matchService =  $matchService;
+        $this->summonerRepository =  $summonerRepository;
     }
 
     /**
@@ -35,10 +47,17 @@ class MatchListController extends Controller
      * @param int|string $identity
      * @return Illuminate\Http\Response
      */
-    public function getMatchesByIdentity(Request $request, $identity)
+    public function getSummonerMatchHistory(Request $request, string $server, string $name)
     {
-        $matches = $this->matchApi->getMatchListByAccountId($identity, $request->toArray());
-        
-        return response()->json($matches);
+        $summoner = $this->summonerRepository->getSummonerByName($server, $name);
+
+        $matches = Match::with('teams.participants.summoner')
+            ->whereHas('participants', function($q) use ($summoner) {
+                $q->where('summoner_id', $summoner->summoner_id);
+            })
+            ->paginate(20);
+
+        // return $match;
+        return MatchResource::collection($matches);
     }
 }

@@ -25,6 +25,7 @@ class CreateMatchesTable extends Migration
             $table->string('game_version');
             $table->string('game_mode');
             $table->string('game_type');
+            $table->json('timeline');
             $table->timestamps();
         });
     }

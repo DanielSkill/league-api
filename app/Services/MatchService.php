@@ -3,11 +3,14 @@
 namespace App\Services;
 
 use App\Models\Team;
+use App\Models\Event;
+use App\Models\Frame;
 use App\Models\Match;
 use App\Models\Summoner;
 use App\Models\Participant;
-use App\Contracts\Support\LeagueAPI\MatchApiInterface;
 use Illuminate\Support\Arr;
+use App\Models\ParticipantFrame;
+use App\Contracts\Support\LeagueAPI\MatchApiInterface;
 
 class MatchService
 {
@@ -21,11 +24,12 @@ class MatchService
      */
     public function __construct(MatchApiInterface $matchApi)
     {
-        $this->matchApi = $matchApi;        
+        $this->matchApi = $matchApi;
     }
 
     /**
      * Save a match to the database
+     * TODO: TIDY UP AND OPTIMISE
      *
      * @param mixed $match
      * @return void
@@ -45,18 +49,21 @@ class MatchService
                 'game_version' => $match['details']['gameVersion'],
                 'game_mode' => $match['details']['gameMode'],
                 'game_type' => $match['details']['gameType'],
+                'timeline' => $match['timeline']
             ]);
 
             foreach ($match['details']['participantIdentities'] as $summoner) {
                 Summoner::firstOrCreate(
                     [
-                        'summoner_id' => $summoner['player']['summonerId']
+                        'summoner_id' => $summoner['player']['summonerId'],
+                        'server' => $match['details']['platformId']
                     ],
                     [
+                        'server' => $match['details']['platformId'],
                         'summoner_id' => $summoner['player']['summonerId'],
                         'account_id' => $summoner['player']['accountId'],
                         'name' => $summoner['player']['summonerName'],
-                        'profile_icon_id' => $summoner['player']['profileIcon'],
+                        'profile_icon_id' => $summoner['player']['profileIcon']
                     ]
                 );
             }
@@ -82,8 +89,8 @@ class MatchService
                 ]);
             }
 
-            foreach ($match['details']['participants'] as $participant) {
-                Participant::create([
+            $participants = collect($match['details']['participants'])->transform(function ($participant) use ($match) {
+                return [
                     'summoner_id' => $match['details']['participantIdentities'][$participant['participantId'] - 1]['player']['summonerId'],
                     'match_id' => $match['details']['gameId'],
                     'team_id' => $participant['teamId'],
@@ -91,11 +98,13 @@ class MatchService
                     'summoner_spell_1' => $participant['spell1Id'],
                     'summoner_spell_2' => $participant['spell2Id'],
                     'highest_achieved_season_tier' => $participant['highestAchievedSeasonTier'] ?? null,
-                    'stats' => $participant['stats'],
-                ]);
-            }
+                    'stats' => json_encode($participant['stats']) // because we use insert it does not touch Eloquent so we need to use json_encode
+                ];
+            });
+
+            Participant::insert($participants->toArray());
         }
-       
+
     }
 
     /**
@@ -107,14 +116,21 @@ class MatchService
     public function saveMatches($matches)
     {
         foreach ($matches as $match) {
-            $match_details = $this->matchApi->getMatchDetailsByGameId($match['gameId']);
-            $match_timeline = $this->matchApi->getMatchTimelineByGameId($match['gameId']);
+            $match_details = $this->matchApi->queueMatchDetailsByGameId($match['gameId']);
+            $match_timeline = $this->matchApi->queueMatchTimelineByGameId($match['gameId']);
+        }
 
-            $detailed_match = [
-                'details' => $match_details,
-                'timeline' => $match_timeline,
-            ];
+        $matches = $this->matchApi->getAllQueuedRequests();
 
+        $response_collection = [];
+
+        foreach ($matches as $key => $match) {
+            $accessor = explode('-', $key);
+
+            $response_collection[$accessor[0]][$accessor[1]] = json_decode($match['value']->getBody(), true);
+        }
+
+        foreach ($response_collection as $detailed_match) {
             $this->saveMatch($detailed_match);
         }
     }
@@ -126,12 +142,13 @@ class MatchService
      * @param integer $count
      * @return array
      */
-    public function loadRecentGames(string $id, int $count = 10)
+    public function loadRecentGames(Summoner $summoner, int $count = 10)
     {
         // get array of games
-        $games = $this->matchApi->getMatchlist($id, [
-            'endIndex' => $count
-        ]);
+        $games = $this->matchApi->server($summoner->server)
+            ->getMatchlist($summoner->account_id, [
+                'endIndex' => $count
+            ]);
 
         // get games already in the database
         $existing_matches = Match::whereIn('game_id', array_column($games['matches'], 'gameId'))->pluck('game_id');

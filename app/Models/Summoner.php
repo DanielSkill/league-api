@@ -22,4 +22,14 @@ class Summoner extends Model
     {
         return $this->hasManyThrough('App\Models\Match', 'App\Models\Participant', 'summoner_id', 'game_id', 'summoner_id', 'match_id');
     }
+
+    /**
+     * Determine if the summoner needs an initial load (no games currently in database)
+     *
+     * @return boolean
+     */
+    public function isInitialLoad()
+    {
+        return $this->matches()->count() == 0;
+    }
 }

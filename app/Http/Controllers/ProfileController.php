@@ -31,29 +31,37 @@ class ProfileController extends Controller
     /**
      * Get summoner profile
      *
+     * @param string $server
      * @param string $name
      * @return Response
      */
-    public function getProfile($name)
+    public function getProfile(string $server, string $name)
     {
-        $summoner = $this->summonerRepository->getSummonerByName($name);
+        $summoner = $this->summonerRepository->getSummonerByName($server, $name);
 
-        return Summoner::with('matches.participants')->find($summoner->id);
+        return Summoner::with('matches.teams.participants')->find($summoner->id);
     }
 
     /**
      * See if we don't have any of the users recent past games and save required games to
      * the database, return new summoner information after.
      *
+     * @param string $server
      * @param string $name
      * @return Response
      */
-    public function updateProfile($name)
-    {        
-        $summoner = $this->summonerRepository->getSummonerByName($name);
+    public function updateProfile(string $server, string $name)
+    {
+        $summoner = $this->summonerRepository->getSummonerByName($server, $name, true);
 
-        $this->matchService->loadRecentGames($summoner->account_id);
+        $this->matchService->loadRecentGames($summoner, $summoner->isInitialLoad() ? 20 : 10);
 
-        return Summoner::with('matches.participants')->find($summoner->id);
+
+        $summoner = Summoner::with('matches.participants', 'matches.teams')->find($summoner->id);
+
+        return $summoner;
+
+        // use for debug bar
+        // return view('welcome', compact('summoner'));
     }
 }
