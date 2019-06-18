@@ -11,6 +11,10 @@
 |
 */
 
+Route::get('/phpinfo', function() {
+    phpinfo();
+});
+
 Route::group(['prefix' => 'api'], function() {
     // Summoner routes
     Route::get('/summoner/by-name/{name}/{server?}', 'SummonerController@byName');
