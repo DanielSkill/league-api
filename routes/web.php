@@ -11,7 +11,7 @@
 |
 */
 
-Route::group(['prefix' => 'api'], function() {
+Route::group(['prefix' => 'api', 'middleware' => 'cors'], function() {
     // Summoner routes
     Route::get('/summoner/by-name/{name}/{server?}', 'SummonerController@byName');
     Route::get('/summoner/by-summonerid/{id}/{server?}', 'SummonerController@bySummonerId');
