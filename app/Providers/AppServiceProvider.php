@@ -2,7 +2,13 @@
 
 namespace App\Providers;
 
+use App\Support\LeagueAPI\MatchApi;
+use App\Support\LeagueAPI\SummonerApi;
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\SummonerRepository;
+use App\Contracts\Support\LeagueAPI\MatchApiInterface;
+use App\Contracts\Support\LeagueAPI\SummonerApiInterface;
+use App\Contracts\Repositories\SummonerRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,13 +30,18 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            'App\Contracts\Support\LeagueAPI\SummonerApiInterface',
-            'App\Support\LeagueAPI\SummonerApi'
+            SummonerApiInterface::class,
+            SummonerApi::class
         );
 
         $this->app->bind(
-            'App\Contracts\Support\LeagueAPI\MatchApiInterface',
-            'App\Support\LeagueAPI\MatchApi'
+            MatchApiInterface::class,
+            MatchApi::class
+        );
+
+        $this->app->bind(
+            SummonerRepositoryInterface::class,
+            SummonerRepository::class
         );
     }
 }

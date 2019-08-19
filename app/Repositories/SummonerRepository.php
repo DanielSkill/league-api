@@ -2,10 +2,11 @@
 
 namespace App\Repositories;
 
+use App\Contracts\Repositories\SummonerRepositoryInterface;
 use App\Models\Summoner;
 use App\Contracts\Support\LeagueAPI\SummonerApiInterface;
 
-class SummonerRepository
+class SummonerRepository implements SummonerRepositoryInterface
 {
     /**
      * @var SummonerApiInterface

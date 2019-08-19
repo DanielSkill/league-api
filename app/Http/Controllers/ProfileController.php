@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Summoner;
 use Illuminate\Http\Request;
-use App\Repositories\SummonerRepository;
 use App\Services\MatchService;
+use App\Repositories\SummonerRepository;
+use App\Contracts\Repositories\SummonerRepositoryInterface;
 
 class ProfileController extends Controller
 {
@@ -20,9 +21,9 @@ class ProfileController extends Controller
     protected $matchService;
 
     /**
-     * @param SummonerRepository $summonerRepository
+     * @param SummonerRepositoryInterface $summonerRepository
      */
-    public function __construct(SummonerRepository $summonerRepository, MatchService $matchService)
+    public function __construct(SummonerRepositoryInterface $summonerRepository, MatchService $matchService)
     {
         $this->matchService = $matchService;
         $this->summonerRepository = $summonerRepository;
@@ -55,7 +56,6 @@ class ProfileController extends Controller
         $summoner = $this->summonerRepository->getSummonerByName($server, $name, true);
 
         $this->matchService->loadRecentGames($summoner, $summoner->isInitialLoad() ? 20 : 10);
-
 
         $summoner = Summoner::with('matches.participants', 'matches.teams')->find($summoner->id);
 
