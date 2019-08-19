@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\Repositories\SummonerRepositoryInterface;
 use App\Models\Match;
 use Illuminate\Http\Request;
 use App\Services\MatchService;
@@ -27,14 +28,14 @@ class MatchListController extends Controller
     protected $summonerRepository;
 
     /**
-     * MatchListController Constructor
-     *
      * @param MatchApiInterface $matchApi
+     * @param MatchService $matchService
+     * @param SummonerRepositoryInterface $summonerRepository
      */
     public function __construct(
         MatchApiInterface $matchApi,
         MatchService $matchService,
-        SummonerRepository $summonerRepository)
+        SummonerRepositoryInterface $summonerRepository)
     {
         $this->matchApi =  $matchApi;
         $this->matchService =  $matchService;

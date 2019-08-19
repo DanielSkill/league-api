@@ -22,6 +22,7 @@ class ProfileController extends Controller
 
     /**
      * @param SummonerRepositoryInterface $summonerRepository
+     * @param MatchService $matchService
      */
     public function __construct(SummonerRepositoryInterface $summonerRepository, MatchService $matchService)
     {
