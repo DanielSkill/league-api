@@ -39,22 +39,24 @@ class SummonerRepository
         if (! $summoner || $summoner->summoner_level == null || $update) {
             $response = $this->summonerApi->server($server)->getSummonerByName($name);
 
-            $summoner = Summoner::updateOrCreate(
-                [
-                    'summoner_id' => $response['id'],
-                    'server' => $server
-                ],
-                [
-                    'server' => $server,
-                    'summoner_id' => $response['id'],
-                    'account_id' => $response['accountId'],
-                    'puuid' => $response['puuid'],
-                    'name' => $response['name'],
-                    'summoner_level' => $response['summonerLevel'],
-                    'profile_icon_id' => $response['profileIconId'],
-                    'revision_date' => $response['revisionDate'],
-                ]
-            );
+            if ($response->isSuccessStatus) {
+                $summoner = Summoner::updateOrCreate(
+                    [
+                        'summoner_id' => $response['id'],
+                        'server' => $server
+                    ],
+                    [
+                        'server' => $server,
+                        'summoner_id' => $response['id'],
+                        'account_id' => $response['accountId'],
+                        'puuid' => $response['puuid'],
+                        'name' => $response['name'],
+                        'summoner_level' => $response['summonerLevel'],
+                        'profile_icon_id' => $response['profileIconId'],
+                        'revision_date' => $response['revisionDate'],
+                    ]
+                );
+            }
         }
 
         return $summoner;

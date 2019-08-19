@@ -2,6 +2,7 @@
 
 namespace App\Support\LeagueAPI;
 
+use App\Support\LeagueAPI\APIResponse;
 use App\Support\LeagueAPI\BaseApiClient;
 use App\Contracts\Support\LeagueAPI\SummonerApiInterface;
 
@@ -18,7 +19,7 @@ class SummonerApi extends BaseApiClient implements SummonerApiInterface
      * Get a summoner by their summoner name
      *
      * @param string $name
-     * @return object
+     * @return APIResponse
      */
     public function getSummonerByName(string $name)
     {
@@ -31,7 +32,7 @@ class SummonerApi extends BaseApiClient implements SummonerApiInterface
      * Get a summoner by their summoner id
      *
      * @param int $id
-     * @return object
+     * @return APIResponse
      */
     public function getSummonerBySummonerId(int $id)
     {
@@ -44,7 +45,7 @@ class SummonerApi extends BaseApiClient implements SummonerApiInterface
      * Get a summoner by their account id
      *
      * @param int $id
-     * @return object
+     * @return APIResponse
      */
     public function getSummonerByAccountId(int $id)
     {

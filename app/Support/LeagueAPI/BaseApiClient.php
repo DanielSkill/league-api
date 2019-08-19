@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Handler\CurlHandler;
+use App\Support\LeagueAPI\APIResponse;
 use hamburgscleanest\GuzzleAdvancedThrottle\RequestLimitRuleset;
 use hamburgscleanest\GuzzleAdvancedThrottle\Middleware\ThrottleMiddleware;
 
@@ -62,7 +63,7 @@ abstract class BaseApiClient
                 'query' => $params
             ]);
 
-        return $this->parseResponse($response->getBody());
+        return $this->parseResponse($response);
     }
 
     /**
@@ -123,11 +124,11 @@ abstract class BaseApiClient
      * Return the response as json
      *
      * @param object $response
-     * @return object
+     * @return APIResponse
      */
     protected function parseResponse($response)
     {
-        return json_decode($response, true);
+        return new APIResponse($response);
     }
 
     /**

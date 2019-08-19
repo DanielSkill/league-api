@@ -2,6 +2,7 @@
 
 namespace App\Support\LeagueAPI;
 
+use App\Support\LeagueAPI\APIResponse;
 use App\Support\LeagueAPI\BaseApiClient;
 use App\Contracts\Support\LeagueAPI\MatchApiInterface;
 
@@ -19,7 +20,7 @@ class MatchApi extends BaseApiClient implements MatchApiInterface
      *
      * @param string $id
      * @param array $options
-     * @return void
+     * @return APIResponse
      */
     public function getMatchList($id, array $options)
     {
@@ -32,7 +33,7 @@ class MatchApi extends BaseApiClient implements MatchApiInterface
      * Get game details by a game id
      *
      * @param int $id
-     * @return object
+     * @return APIResponse
      */
     public function getMatchDetailsByGameId($id)
     {
@@ -45,7 +46,7 @@ class MatchApi extends BaseApiClient implements MatchApiInterface
      * Get game timeline by a game id
      *
      * @param int $id
-     * @return object
+     * @return APIResponse
      */
     public function getMatchTimelineByGameId($id)
     {
